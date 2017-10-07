@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boolean-algebra</a> &gt; <a href="index.source.html" class="el_package">de.codesourcery.booleanalgebra</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package de.codesourcery.booleanalgebra;
+
+import java.io.BufferedReader;
+import java.io.Console;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
+import de.codesourcery.booleanalgebra.ast.ASTNode;
+import de.codesourcery.booleanalgebra.ast.BooleanExpression;
+import de.codesourcery.booleanalgebra.ast.FalseNode;
+import de.codesourcery.booleanalgebra.ast.Identifier;
+import de.codesourcery.booleanalgebra.ast.TermNode;
+import de.codesourcery.booleanalgebra.ast.TrueNode;
+
+<span class="nc" id="L21">public class Main</span>
+{
+<span class="nc" id="L23">    private final BooleanExpressionParser parser = new BooleanExpressionParser();</span>
+<span class="nc" id="L24">    private final ASTTransformations transformer = new ASTTransformations();</span>
+
+    private ASTNode term;
+    private String expression;
+
+<span class="nc" id="L29">    private final ExpressionContext context = new ExpressionContext();</span>
+
+    public static void main(String[] args) throws IOException
+    {
+<span class="nc" id="L33">        new Main().run();</span>
+<span class="nc" id="L34">    }</span>
+
+    public void setTerm(String expr) 
+    {
+<span class="nc" id="L38">        term = parser.parse( expr , true );</span>
+<span class="nc" id="L39">        this.expression = expr;</span>
+<span class="nc" id="L40">        System.out.println(&quot;Expression: &quot;+expression+&quot; (parsed: &quot;+toString( term ) +&quot;)&quot; );</span>
+<span class="nc" id="L41">    }</span>
+
+    private static String toString(ASTNode n) {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        return n == null ? &quot;&lt;null&gt;&quot; : n.toString( true );</span>
+    }
+
+    private String readLine() throws IOException {
+<span class="nc" id="L48">        Console console = System.console();</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if ( console == null ) {</span>
+<span class="nc" id="L50">            BufferedReader reader = new BufferedReader(new InputStreamReader( System.in ) );</span>
+<span class="nc" id="L51">            return reader.readLine();</span>
+        }
+<span class="nc" id="L53">        return console.readLine();</span>
+    }
+
+    public void run() throws IOException 
+    {
+<span class="nc" id="L58">        transformer.setDebug( true );</span>
+
+<span class="nc" id="L60">        String input=&quot;&quot;;</span>
+
+<span class="nc" id="L62">        System.console();</span>
+<span class="nc bnc" id="L63" title="All 4 branches missed.">        while( input != null &amp;&amp; ! &quot;quit&quot;.equalsIgnoreCase( input ) ) </span>
+        {   
+<span class="nc" id="L65">            System.out.print(&quot;INPUT &gt; &quot;);</span>
+<span class="nc" id="L66">            input = readLine();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">            if ( input != null ) </span>
+            {
+                try {
+<span class="nc" id="L70">                    executeCommand( input );</span>
+<span class="nc" id="L71">                } catch(Exception e) {</span>
+<span class="nc" id="L72">                    e.printStackTrace();</span>
+<span class="nc" id="L73">                }</span>
+            }
+        }
+<span class="nc" id="L76">        System.out.println(&quot;Application terminated.&quot;);</span>
+<span class="nc" id="L77">    }</span>
+
+    private void executeCommand(String input)
+    {
+<span class="nc" id="L81">        final String[] parts = input.trim().split(&quot;[ \t]&quot;);</span>
+        final String[] partsWithoutCommand;
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if ( parts.length &gt; 1 ) {</span>
+<span class="nc" id="L84">            partsWithoutCommand = (String[]) ArrayUtils.subarray( parts , 1 , parts.length );</span>
+        } else {
+<span class="nc" id="L86">            partsWithoutCommand = new String[0];</span>
+        }
+
+<span class="nc" id="L89">        final String cmd = parts[0].trim().toLowerCase();</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if ( cmd.startsWith( &quot;expr&quot; ) ) {</span>
+<span class="nc" id="L91">            setTerm( StringUtils.join(partsWithoutCommand , &quot; &quot; ) );</span>
+<span class="nc" id="L92">            return;</span>
+        } 
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;set&quot; ) ) {</span>
+<span class="nc" id="L95">            setVariable( partsWithoutCommand );</span>
+        }
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;vars&quot; ) ) {</span>
+<span class="nc" id="L98">            showVars();</span>
+        }   
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;help&quot; ) ) {</span>
+<span class="nc" id="L101">            printHelp();</span>
+        } 	    
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;resetVars&quot; ) ) {</span>
+<span class="nc" id="L104">            resetVars();</span>
+        } 	
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;show&quot; ) ) {</span>
+<span class="nc" id="L107">            show();</span>
+        }  	    
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;reduce&quot; ) ) {</span>
+<span class="nc" id="L110">            reduce();</span>
+        }   	    
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;restart&quot; ) ) {</span>
+<span class="nc" id="L113">            restart();</span>
+        }   
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;common&quot; ) ) {</span>
+<span class="nc" id="L116">            substituteCommonTerms();</span>
+        }  	    
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;eval&quot; ) ) {</span>
+<span class="nc" id="L119">            eval();</span>
+        }  
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;expand&quot; ) ) {</span>
+<span class="nc" id="L122">            expandVariables();</span>
+        }          
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;unset&quot; ) ) {</span>
+<span class="nc" id="L125">            unsetVariable( partsWithoutCommand );</span>
+        }   	    
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;simplify&quot; ) ) {</span>
+<span class="nc" id="L128">            simplify();</span>
+        }
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;truth&quot; ) ) {</span>
+<span class="nc" id="L131">            printTruthTable();</span>
+        }	    
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        else if ( cmd.equalsIgnoreCase(&quot;quit&quot; ) ) {</span>
+            // handled by calling method
+        } else {
+<span class="nc" id="L136">            System.err.println(&quot;Unknown command '&quot;+cmd+&quot;'&quot;);</span>
+        }
+<span class="nc" id="L138">    }</span>
+
+    private void substituteCommonTerms()
+    {
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if ( expression != null ) </span>
+        {
+<span class="nc" id="L144">            term = transformer.substituteCommonTerms( term , context );</span>
+<span class="nc" id="L145">            System.out.println(&quot;SUBSTITUTE: &quot;+term);</span>
+        } else {
+<span class="nc" id="L147">            System.err.println(&quot;No expression entered, cannot substitute common terms.&quot;);</span>
+        }         
+<span class="nc" id="L149">    }</span>
+    
+    private void expandVariables()
+    {
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if ( expression != null ) </span>
+        {
+<span class="nc" id="L155">            term = transformer.expand( term , context , true );</span>
+<span class="nc" id="L156">            System.out.println(&quot;EXPANDED: &quot;+toString( term ) );</span>
+        } else {
+<span class="nc" id="L158">            System.err.println(&quot;No expression entered, cannot substitute common terms.&quot;);</span>
+        }         
+<span class="nc" id="L160">    }    </span>
+
+    private void printTruthTable()
+    {
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if ( term == null ) {</span>
+<span class="nc" id="L165">            System.err.println(&quot;No expression defined.&quot;);</span>
+<span class="nc" id="L166">            return;</span>
+        }
+        
+<span class="nc" id="L169">        transformer.setDebug( false );</span>
+        
+<span class="nc" id="L171">        final ASTNode copy = transformer.expand( term , context , false );        </span>
+
+<span class="nc" id="L173">        final IValidator validator = new IValidator() {</span>
+
+<span class="nc" id="L175">            private boolean firstRow = true;</span>
+            @Override
+            public boolean validate(IExpressionContext ctx)
+            {
+<span class="nc" id="L179">                ExpressionContext context = (ExpressionContext) ctx;</span>
+<span class="nc" id="L180">                ASTNode evaluated = transformer.reduce( copy , ctx.createCopy() ); // note that reduce() will remove variables from the context so we need to pass in a copy here</span>
+<span class="nc" id="L181">                boolean expressionIsFalse = false;</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                if ( evaluated instanceof BooleanExpression) </span>
+                {
+<span class="nc" id="L184">                    final ASTNode lhs = ((BooleanExpression) evaluated).getLHS();</span>
+<span class="nc" id="L185">                    final ASTNode rhs = ((BooleanExpression) evaluated).getRHS();</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                    expressionIsFalse = ! lhs.isEquivalent( rhs  , ctx );</span>
+                }
+<span class="nc" id="L188">                String value = evaluated.toString(true);</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">                if ( expressionIsFalse ) {</span>
+<span class="nc" id="L190">                    value += &quot; (!!)&quot;;</span>
+                }
+<span class="nc bnc" id="L192" title="All 2 branches missed.">                if ( firstRow ) </span>
+                {
+<span class="nc" id="L194">                    System.out.println( context.toString(true , term.toString(true) , value  ) );    </span>
+<span class="nc" id="L195">                    firstRow = false;</span>
+                } else {
+<span class="nc" id="L197">                    System.out.println( context.toString(false , term.toString(true) , value  ) );    </span>
+                }
+<span class="nc" id="L199">                return true;</span>
+            }
+        };
+        
+
+<span class="nc" id="L204">        final List&lt;Identifier&gt; vars = new ArrayList&lt;Identifier&gt;( transformer.gatherIdentifiers( copy ) );</span>
+<span class="nc" id="L205">        Collections.sort( vars );</span>
+<span class="nc" id="L206">        assertTermsAreEquivalent( context.createCopy() , validator , vars );</span>
+<span class="nc" id="L207">        transformer.setDebug( true );</span>
+<span class="nc" id="L208">    }</span>
+
+    private void show()
+    {
+<span class="nc" id="L212">        System.out.println(&quot;Expression: \n\n&quot;+toString( term ) );</span>
+<span class="nc" id="L213">        System.out.println(&quot;\nVariables:\n\n&quot;+context);</span>
+<span class="nc" id="L214">    }</span>
+
+    private void printHelp()
+    {
+<span class="nc" id="L218">        System.out.println(&quot;\n*** HELP ***\n&quot;);</span>
+<span class="nc" id="L219">        System.out.println(&quot;eval                          - evaluate expression&quot;);</span>
+<span class="nc" id="L220">        System.out.println(&quot;expr &lt;expression&gt;             - define expression to work with&quot;);</span>
+<span class="nc" id="L221">        System.out.println(&quot;expand                        - replace variables with their values&quot;);</span>
+<span class="nc" id="L222">        System.out.println(&quot;help                          - show help&quot;);</span>
+<span class="nc" id="L223">        System.out.println(&quot;reduce                        - reduce expression by trying to evaluate sub-expressions&quot;);        </span>
+<span class="nc" id="L224">        System.out.println(&quot;common                        - substitute common terms with vars&quot;);</span>
+<span class="nc" id="L225">        System.out.println(&quot;restart                       - sets all variables to 'undefined' and reset the expression to the last 'expr' command&quot;);</span>
+<span class="nc" id="L226">        System.out.println(&quot;resetVars                     - sets all variables to 'undefined'&quot;);</span>
+<span class="nc" id="L227">        System.out.println(&quot;set &lt;identifier&gt; &lt;expression&gt; - set a variable to a given value/expression&quot;);</span>
+<span class="nc" id="L228">        System.out.println(&quot;show                          - prints the current expression and variable definitions&quot;);</span>
+<span class="nc" id="L229">        System.out.println(&quot;simplify                      - try to simplify the expression&quot;);</span>
+<span class="nc" id="L230">        System.out.println(&quot;truth                         - print truth table&quot;);</span>
+<span class="nc" id="L231">        System.out.println(&quot;quit                          - terminate application&quot;);</span>
+<span class="nc" id="L232">        System.out.println();</span>
+<span class="nc" id="L233">    }</span>
+
+    private void resetVars()
+    {
+<span class="nc" id="L237">        context.clear();</span>
+<span class="nc" id="L238">    }</span>
+
+    private void eval()
+    {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if ( expression != null ) </span>
+        {
+<span class="nc" id="L244">            ASTNode result = transformer.eval( term , context );</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            if ( result == null ) {</span>
+<span class="nc" id="L246">                System.out.println(&quot;Failed to evaluate expression &quot;+toString( term ));</span>
+            } else {
+<span class="nc" id="L248">                System.out.println(&quot;EVAL: &quot;+result);</span>
+            }
+<span class="nc" id="L250">        } else {</span>
+<span class="nc" id="L251">            System.err.println(&quot;No expression entered, cannot restart&quot;);</span>
+        }        
+<span class="nc" id="L253">    }	</span>
+
+    private void reduce()
+    {
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if ( expression != null ) </span>
+        {
+<span class="nc" id="L259">            ASTNode result = transformer.reduce( term , context );</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">            if ( result == null ) {</span>
+<span class="nc" id="L261">                System.out.println(&quot;Failed to reduce expression &quot;+toString( term ));</span>
+            } else {
+<span class="nc" id="L263">                System.out.println(&quot;REDUCE: &quot;+result);</span>
+<span class="nc" id="L264">                term = result;</span>
+            }
+<span class="nc" id="L266">        } else {</span>
+<span class="nc" id="L267">            System.err.println(&quot;No expression entered, cannot restart&quot;);</span>
+        }        
+<span class="nc" id="L269">    }       </span>
+
+    private void showVars()
+    {
+<span class="nc" id="L273">        System.out.println( context.toString() );</span>
+<span class="nc" id="L274">    }</span>
+
+    private void restart()
+    {
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if ( expression != null ) </span>
+        {
+<span class="nc" id="L280">            setTerm( expression );</span>
+<span class="nc" id="L281">            context.clear();</span>
+        } else {
+<span class="nc" id="L283">            System.err.println(&quot;No expression entered, cannot restart&quot;);</span>
+        }
+<span class="nc" id="L285">    }</span>
+
+    private void unsetVariable(String[] parts)
+    {
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        if ( parts.length != 1 ) {</span>
+<span class="nc" id="L290">            System.out.println(&quot;Syntax: UNSET &lt;variable&gt;&quot;);</span>
+<span class="nc" id="L291">            return;</span>
+        }
+
+<span class="nc" id="L294">        final String identifier = parts[0];</span>
+<span class="nc" id="L295">        context.remove( new Identifier( identifier ) );</span>
+<span class="nc" id="L296">        System.out.println(&quot;UNSET &quot;+identifier);</span>
+<span class="nc" id="L297">    }	</span>
+
+    private void setVariable(String[] parts)
+    {
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        if ( parts.length &lt; 2 ) {</span>
+<span class="nc" id="L302">            System.out.println(&quot;Syntax: SET &lt;variable&gt; &lt;value or expression&gt;&quot;);</span>
+<span class="nc" id="L303">            return;</span>
+        }
+<span class="nc" id="L305">        final String identifier = parts[0];</span>
+<span class="nc" id="L306">        final String value = StringUtils.join( ArrayUtils.subarray( parts , 1 , parts.length ) , &quot; &quot; );</span>
+<span class="nc" id="L307">        ASTNode parsedValue = parser.unwrap( parser.parse( value , true ) );</span>
+<span class="nc bnc" id="L308" title="All 4 branches missed.">        if ( parsedValue instanceof TermNode &amp;&amp; parsedValue.hasChildren()) {</span>
+<span class="nc" id="L309">            parsedValue = parsedValue.child(0);</span>
+        }
+<span class="nc" id="L311">        context.set( new Identifier( identifier ) , parsedValue );</span>
+<span class="nc" id="L312">        System.out.println(&quot;SET &quot;+identifier+&quot; = &quot;+toString( parsedValue ) );</span>
+<span class="nc" id="L313">    }	</span>
+
+    private void simplify()
+    {
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        if ( term == null ) {</span>
+<span class="nc" id="L318">            System.out.println(&quot;No term defined.&quot;);</span>
+<span class="nc" id="L319">            return;</span>
+        }
+<span class="nc" id="L321">        term = transformer.simplify( term , context );</span>
+<span class="nc" id="L322">        System.out.println(&quot;Simplified: &quot;+toString( term ) );</span>
+<span class="nc" id="L323">    }</span>
+
+    protected interface IValidator {
+        public boolean validate(IExpressionContext ctx);
+    }
+
+    public void assertTermsAreEquivalent(final ASTNode input , final ASTNode output) 
+    {
+<span class="nc" id="L331">        final IValidator v = new IValidator() {</span>
+
+            @Override
+            public boolean validate(IExpressionContext context) {
+<span class="nc" id="L335">                ASTNode val1 = input.evaluate( context );</span>
+<span class="nc" id="L336">                ASTNode val2 = output.evaluate( context );</span>
+<span class="nc" id="L337">                return val1.isEquivalent( val2 , context); </span>
+            }
+        };
+
+<span class="nc" id="L341">        final List&lt;Identifier&gt; vars = new ArrayList&lt;Identifier&gt;( transformer.gatherIdentifiers( input ) );		</span>
+<span class="nc" id="L342">        assertTermsAreEquivalent( context.createCopy() , v , vars );</span>
+<span class="nc" id="L343">    }</span>
+
+    public void assertTermsAreEquivalent(IExpressionContext context , IValidator validator,List&lt;Identifier&gt; vars) 
+    {
+<span class="nc" id="L347">        final List&lt;Identifier&gt; reversedVars = new ArrayList&lt;Identifier&gt;( vars );</span>
+<span class="nc" id="L348">        Collections.reverse( reversedVars );</span>
+        
+        // size = 1 =&gt; 1 &lt;&lt; 1 =&gt; 2
+        // size = 2 =&gt; 1 &lt;&lt; 2 =&gt; 4
+<span class="nc bnc" id="L352" title="All 2 branches missed.">        long maxValue = vars.isEmpty() ? 0 : 1&lt;&lt; vars.size();</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">        for ( long val = 0 ; val &lt; maxValue ; val++ ) </span>
+        {
+<span class="nc" id="L355">            int mask = 1;</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">            for ( Identifier id : reversedVars ) </span>
+            {
+<span class="nc" id="L358">                final ASTNode value = context.tryLookup( id );</span>
+<span class="nc bnc" id="L359" title="All 4 branches missed.">                if ( value == null || value.isLiteralValue() ) {</span>
+<span class="nc bnc" id="L360" title="All 2 branches missed.">                    final ASTNode bitValue = ( val &amp; mask) != 0 ? new TrueNode() : new FalseNode();</span>
+<span class="nc" id="L361">                    context.set( id  , bitValue );</span>
+<span class="nc" id="L362">                    mask = mask &lt;&lt; 1;</span>
+                }
+<span class="nc" id="L364">            }</span>
+
+<span class="nc bnc" id="L366" title="All 2 branches missed.">            if ( ! validator.validate( context ) )</span>
+            {
+<span class="nc" id="L368">                System.out.println(&quot;\n------------------------&quot;);</span>
+<span class="nc" id="L369">                System.out.println( &quot;\nVariables:\n\n&quot;+context.toString() );</span>
+<span class="nc" id="L370">                System.out.println(&quot;\n------------------------&quot;);</span>
+
+<span class="nc" id="L372">                throw new RuntimeException(&quot;validator failed.&quot;);</span>
+            }
+        }
+<span class="nc" id="L375">    }</span>
+
+    public ASTNode simplify(final String expr) {
+<span class="nc" id="L378">        ASTNode term = parseTerm( expr );</span>
+<span class="nc" id="L379">        return simplify( term );</span>
+    }
+
+    public ASTNode simplify(ASTNode term) {
+
+<span class="nc" id="L384">        final ExpressionContext ctx = new ExpressionContext();</span>
+<span class="nc" id="L385">        ASTNode simplified = transformer.simplify( term , ctx );</span>
+<span class="nc" id="L386">        return simplified;</span>
+    }
+
+    public void reduce(final String expr) {
+
+<span class="nc" id="L391">        final ExpressionContext ctx = new ExpressionContext();</span>
+<span class="nc" id="L392">        ASTNode term = parseTerm( expr );</span>
+
+<span class="nc" id="L394">        ASTNode reduced = term.evaluate( ctx );</span>
+<span class="nc" id="L395">        System.out.println(&quot;REDUCED: &quot;+term+&quot; -&gt; &quot;+reduced.toString(true) );</span>
+<span class="nc" id="L396">    }    </span>
+
+    public void evaluate(final String expr) 
+    {
+        ExpressionContext ctx;
+<span class="nc" id="L401">        ctx = new ExpressionContext();</span>
+<span class="nc" id="L402">        final ASTNode term = parseTerm( expr );</span>
+
+<span class="nc" id="L404">        Identifier a = Identifier.id(&quot;a&quot;);</span>
+<span class="nc" id="L405">        Identifier b = Identifier.id(&quot;b&quot;);</span>
+<span class="nc" id="L406">        Identifier c = Identifier.id(&quot;c&quot;);</span>
+
+<span class="nc" id="L408">        int value = 0;</span>
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        for ( ; value &lt;= 7 ; value++ ) {</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">            ctx.define( a , (value &amp; 4) != 0 );</span>
+<span class="nc bnc" id="L411" title="All 2 branches missed.">            ctx.define( b , (value &amp; 2) != 0 );</span>
+<span class="nc bnc" id="L412" title="All 2 branches missed.">            ctx.define( c , (value &amp; 1) != 0 );</span>
+
+<span class="nc" id="L414">            System.out.print( padRight( &quot; a= &quot;+ctx.lookup( a ) , 10 ) );</span>
+<span class="nc" id="L415">            System.out.print( &quot; | &quot;+padRight( &quot; b= &quot;+ctx.lookup( b ) , 10 ) );</span>
+<span class="nc" id="L416">            System.out.print( &quot; | &quot;+padRight( &quot; c= &quot;+ctx.lookup( c ) , 10 ) );</span>
+<span class="nc" id="L417">            System.out.print(&quot; | &quot;+expr+&quot; = &quot;+term.evaluate( ctx ) );</span>
+
+<span class="nc" id="L419">            ASTNode reduced = term.evaluate( ctx );</span>
+<span class="nc" id="L420">            System.out.print(&quot; | reduced = &quot;+reduced);</span>
+<span class="nc" id="L421">            System.out.println();</span>
+        }
+<span class="nc" id="L423">    }</span>
+
+    private ASTNode parseTerm(String s) 
+    {
+<span class="nc" id="L427">        return parser.parse( s , true );</span>
+    }    
+
+    private final String padRight(String s , int len) 
+    {
+        int delta;
+<span class="nc bnc" id="L433" title="All 2 branches missed.">        if ( s.length() &lt; len ) {</span>
+<span class="nc" id="L434">            delta = len - s.length();</span>
+        } else {
+<span class="nc" id="L436">            delta = 0;</span>
+        }
+<span class="nc" id="L438">        return s+StringUtils.repeat(&quot; &quot; , delta );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Lexer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boolean-algebra</a> &gt; <a href="index.source.html" class="el_package">de.codesourcery.booleanalgebra.lexer</a> &gt; <span class="el_source">Lexer.java</span></div><h1>Lexer.java</h1><pre class="source lang-java linenums">package de.codesourcery.booleanalgebra.lexer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.codesourcery.booleanalgebra.IScanner;
+import de.codesourcery.booleanalgebra.ast.Identifier;
+import de.codesourcery.booleanalgebra.exceptions.ParseException;
+
+public class Lexer implements ILexer
+{
+    private final IScanner scanner;
+    
+<span class="nc" id="L15">    private final StringBuilder buffer = new StringBuilder();</span>
+<span class="nc" id="L16">    private final List&lt;Token&gt; tokens=new ArrayList&lt;Token&gt;();</span>
+    
+<span class="nc" id="L18">    private boolean skipWhitespace = true;</span>
+    
+<span class="nc" id="L20">    public Lexer(IScanner scanner) {</span>
+<span class="nc" id="L21">        this.scanner = scanner;</span>
+<span class="nc" id="L22">    }</span>
+    
+    private Token currentToken() {
+        
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if ( tokens.isEmpty() )</span>
+        {
+            try {
+<span class="nc bnc" id="L29" title="All 2 branches missed.">                if ( scanner.eof() ) {</span>
+<span class="nc" id="L30">                    return null;</span>
+                }
+<span class="nc" id="L32">                parseNextTokens();                </span>
+<span class="nc" id="L33">            } catch (IOException e) {</span>
+<span class="nc" id="L34">                throw new ParseException(e.getMessage(),scanner.currentParseOffset(),e);                </span>
+<span class="nc" id="L35">            }</span>
+            
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            if ( tokens.isEmpty() ) {</span>
+<span class="nc" id="L38">                return null;</span>
+            }
+        }
+<span class="nc" id="L41">        return tokens.get(0);</span>
+    }
+    
+    private void parseNextTokens() throws IOException
+    {
+<span class="nc" id="L46">        int startOffset = scanner.currentParseOffset();</span>
+<span class="nc" id="L47">        buffer.setLength( 0 );</span>
+outer_loop:        
+<span class="nc bnc" id="L49" title="All 4 branches missed.">        while ( ! scanner.eof() &amp;&amp; tokens.isEmpty() ) </span>
+        {
+<span class="nc" id="L51">            char c = scanner.read();</span>
+<span class="nc bnc" id="L52" title="All 5 branches missed.">            switch( c ) {</span>
+                case '=':
+<span class="nc" id="L54">                    bufferToTokens(startOffset,true);</span>
+<span class="nc" id="L55">                    tokens.add( new Token( c , scanner.currentParseOffset() - 1, TokenType.EQUALS) );</span>
+<span class="nc" id="L56">                    return;                    </span>
+                case ' ': /* whitespace */
+                case '\t':
+<span class="nc" id="L59">                    bufferToTokens( startOffset , true );</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">                    if ( skipWhitespace ) </span>
+                    {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                        while( ! scanner.eof() ) </span>
+                        {
+<span class="nc" id="L64">                            c = scanner.peek();</span>
+<span class="nc bnc" id="L65" title="All 4 branches missed.">                            if ( c != ' ' &amp;&amp; c != '\t' ) {</span>
+<span class="nc" id="L66">                                continue outer_loop;</span>
+                            }
+<span class="nc" id="L68">                            scanner.read();</span>
+                        }
+<span class="nc" id="L70">                        return;</span>
+                    }
+<span class="nc" id="L72">                    startOffset = scanner.currentParseOffset() -1;</span>
+<span class="nc" id="L73">                    buffer.append( c );</span>
+outer:                    
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                    while( ! scanner.eof() ) {</span>
+<span class="nc" id="L76">                        c = scanner.peek();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">                        switch( c ) {</span>
+                            case ' ':
+                            case '\t':
+<span class="nc" id="L80">                                buffer.append( scanner.read() );</span>
+<span class="nc" id="L81">                                break;</span>
+                            default:
+<span class="nc" id="L83">                                break outer;</span>
+                        }
+                    }
+<span class="nc" id="L86">                    tokens.add( new Token( buffer , startOffset , TokenType.WHITESPACE) );</span>
+<span class="nc" id="L87">                    return;</span>
+                case '(':
+<span class="nc" id="L89">                    bufferToTokens(startOffset,true);</span>
+<span class="nc" id="L90">                    tokens.add( new Token( c , scanner.currentParseOffset() - 1 , TokenType.PARENS_OPEN ) );</span>
+<span class="nc" id="L91">                    return;</span>
+                case ')':
+<span class="nc" id="L93">                    bufferToTokens(startOffset,true);</span>
+<span class="nc" id="L94">                    tokens.add( new Token( c , scanner.currentParseOffset() - 1 , TokenType.PARENS_CLOSE ) );</span>
+<span class="nc" id="L95">                    return;</span>
+            }
+
+<span class="nc" id="L98">            buffer.append( c );</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">            if ( bufferToTokens(startOffset,false) ) {</span>
+<span class="nc" id="L100">                return;</span>
+            }
+<span class="nc" id="L102">        }</span>
+<span class="nc" id="L103">        bufferToTokens(startOffset,true);</span>
+<span class="nc" id="L104">    }</span>
+    
+    private boolean bufferToTokens(int startOffset,boolean delimiterSeen) 
+    {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if ( buffer.length() == 0 ) {</span>
+<span class="nc" id="L109">            return false;</span>
+        }
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if ( internalBufferToTokens( startOffset , delimiterSeen ) ) {</span>
+<span class="nc" id="L112">            buffer.setLength( 0 ); // buffer has been consued</span>
+<span class="nc" id="L113">            return true;</span>
+        }
+<span class="nc" id="L115">        return false;</span>
+    }
+    
+    private boolean internalBufferToTokens(int startOffset,boolean delimiterSeen) 
+    {
+<span class="nc" id="L120">        String buf = buffer.toString();</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if ( &quot;OR&quot;.equalsIgnoreCase( buf ) ) {</span>
+<span class="nc" id="L122">            tokens.add( new Token( buf , startOffset , TokenType.OR ) );</span>
+<span class="nc" id="L123">            return true;</span>
+        }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if ( &quot;AND&quot;.equalsIgnoreCase( buf ) ) {</span>
+<span class="nc" id="L126">            tokens.add(new Token( buf , startOffset , TokenType.AND ) );</span>
+<span class="nc" id="L127">            return true;</span>
+        }    
+        
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if ( &quot;NOT&quot;.equalsIgnoreCase( buf ) ) {</span>
+<span class="nc" id="L131">            tokens.add( new Token( buf , startOffset , TokenType.NOT ) );</span>
+<span class="nc" id="L132">            return true;</span>
+        }  
+        
+<span class="nc bnc" id="L135" title="All 8 branches missed.">        if ( &quot;true&quot;.equalsIgnoreCase( buf ) || &quot;yes&quot;.equalsIgnoreCase( buf ) || &quot;1&quot;.equalsIgnoreCase( buf ) || &quot;on&quot;.equalsIgnoreCase( buf ) ) {</span>
+<span class="nc" id="L136">            tokens.add( new Token( buf , startOffset , TokenType.TRUE ) );</span>
+<span class="nc" id="L137">            return true;</span>
+        }
+        
+<span class="nc bnc" id="L140" title="All 10 branches missed.">        if ( &quot;false&quot;.equalsIgnoreCase( buf ) || ( &quot;no&quot;.equalsIgnoreCase( buf ) &amp;&amp; delimiterSeen ) || &quot;0&quot;.equalsIgnoreCase( buf ) || &quot;off&quot;.equalsIgnoreCase( buf )) {</span>
+<span class="nc" id="L141">            tokens.add( new Token( buf , startOffset , TokenType.FALSE ) );</span>
+<span class="nc" id="L142">            return true;</span>
+        }         
+        
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if ( delimiterSeen ) </span>
+        {
+<span class="nc bnc" id="L147" title="All 2 branches missed.">            if ( Identifier.isValidIdentifier( buf ) ) {</span>
+<span class="nc" id="L148">                tokens.add( new Token( buf , startOffset , TokenType.IDENTIFIER ) );                </span>
+            } else {
+<span class="nc" id="L150">                tokens.add( new Token( buf , startOffset , TokenType.CHARACTERS ) );</span>
+            }
+<span class="nc" id="L152">            return true;</span>
+        }
+<span class="nc" id="L154">        return false;</span>
+    }
+
+    @Override
+    public boolean eof()
+    {
+        try {
+<span class="nc bnc" id="L161" title="All 4 branches missed.">            return currentToken() == null &amp;&amp; scanner.eof();</span>
+<span class="nc" id="L162">        } catch (IOException e) {</span>
+<span class="nc" id="L163">            throw new ParseException(e.getMessage(),scanner.currentParseOffset(),e);</span>
+        }
+    }
+
+    @Override
+    public Token read()
+    {
+<span class="nc" id="L170">        checkEOF();</span>
+<span class="nc" id="L171">        final Token result = currentToken();</span>
+<span class="nc" id="L172">        tokens.remove( 0 );</span>
+<span class="nc" id="L173">        return result;</span>
+    }
+
+    private void checkEOF()
+    {
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        if ( eof() ) {</span>
+<span class="nc" id="L179">            throw new ParseException(&quot;Already at EOF&quot;,scanner.currentParseOffset() );</span>
+        }
+<span class="nc" id="L181">    }</span>
+
+    @Override
+    public Token read(TokenType type)
+    {
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if ( ! peek().hasType( type ) ) {</span>
+<span class="nc" id="L187">            throw new ParseException(&quot;Expected token of type &quot;+type+&quot; but got &quot;+peek().getType(),scanner.currentParseOffset() );            </span>
+        }
+<span class="nc" id="L189">        return read();</span>
+    }
+
+    @Override
+    public Token peek()
+    {
+<span class="nc" id="L195">        checkEOF();</span>
+<span class="nc" id="L196">        return currentToken();</span>
+    }
+
+    @Override
+    public int currentParseOffset()
+    {
+<span class="nc" id="L202">        Token tok = currentToken();</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if ( tok == null ) {</span>
+<span class="nc" id="L204">            return scanner.currentParseOffset();</span>
+        }
+<span class="nc" id="L206">        return tok.getParseOffset();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

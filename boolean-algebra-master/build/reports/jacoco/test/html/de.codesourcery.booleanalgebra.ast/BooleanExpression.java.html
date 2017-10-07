@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BooleanExpression.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boolean-algebra</a> &gt; <a href="index.source.html" class="el_package">de.codesourcery.booleanalgebra.ast</a> &gt; <span class="el_source">BooleanExpression.java</span></div><h1>BooleanExpression.java</h1><pre class="source lang-java linenums">package de.codesourcery.booleanalgebra.ast;
+
+import de.codesourcery.booleanalgebra.IExpressionContext;
+import de.codesourcery.booleanalgebra.exceptions.ParseException;
+import de.codesourcery.booleanalgebra.lexer.ILexer;
+import de.codesourcery.booleanalgebra.lexer.TokenType;
+
+public class BooleanExpression extends ASTNode
+{
+<span class="nc" id="L10">	public BooleanExpression() {</span>
+<span class="nc" id="L11">	}</span>
+	
+<span class="nc" id="L13">	public BooleanExpression(ASTNode lhs,ASTNode rhs) {</span>
+<span class="nc" id="L14">		addChild( lhs );</span>
+<span class="nc" id="L15">		addChild( rhs );</span>
+<span class="nc" id="L16">	}</span>
+
+	@Override
+	protected int getMaxSupportedChildCount()
+	{
+<span class="nc" id="L21">		return 2;</span>
+	}
+
+	@Override
+	public ASTNode parse(ILexer lexer) throws ParseException
+	{
+<span class="nc" id="L27">		addChild( parseTerm( lexer ) );</span>
+<span class="nc" id="L28">		lexer.read(TokenType.EQUALS);</span>
+<span class="nc" id="L29">		addChild( parseTerm( lexer ) );        </span>
+<span class="nc" id="L30">		return this;</span>
+	}
+	
+    protected static ASTNode unwrap(ASTNode n) {
+        
+<span class="nc" id="L35">        ASTNode current = n;</span>
+<span class="nc bnc" id="L36" title="All 6 branches missed.">        while ( current instanceof TermNode &amp;&amp; current.hasChildren() &amp;&amp; current.child(0) instanceof TermNode) {</span>
+<span class="nc" id="L37">            current = current.child(0);</span>
+        }
+<span class="nc" id="L39">        return current;</span>
+    }	
+
+	private ASTNode parseTerm(ILexer lexer ) throws ParseException 
+	{
+<span class="nc" id="L44">	    final ASTNode result = new TermNode().parse( lexer );</span>
+<span class="nc" id="L45">        return unwrap( result );</span>
+	}
+	
+	public ASTNode getLHS() {
+<span class="nc" id="L49">		return child(0);</span>
+	}
+
+	public ASTNode getRHS() {
+<span class="nc" id="L53">		return child(1);</span>
+	}    
+
+	@Override
+	public String toString(boolean prettyPrint)
+	{
+<span class="nc" id="L59">		return childToString(0,prettyPrint)+&quot; = &quot;+childToString(1,prettyPrint);</span>
+	}
+
+	@Override
+	public ASTNode evaluate(IExpressionContext context)
+	{
+<span class="nc" id="L65">		throw new UnsupportedOperationException(&quot;Cannot evaluate an expression,only terms&quot;);</span>
+	}
+
+	@Override
+	public boolean hasLiteralValue(IExpressionContext context) {
+<span class="nc" id="L70">		return false;</span>
+	}
+
+	@Override
+	protected BooleanExpression copyThisNode() {
+<span class="nc" id="L75">		return new BooleanExpression();</span>
+	}
+
+	@Override
+	public boolean isEquals(ASTNode other) 
+	{
+<span class="nc bnc" id="L81" title="All 2 branches missed.">		if ( other instanceof BooleanExpression ) {</span>
+<span class="nc" id="L82">			BooleanExpression otherExpr = (BooleanExpression ) other;</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">			return getLHS().isEquals( otherExpr.getLHS() ) &amp;&amp;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">					getRHS().isEquals( otherExpr.getRHS() );</span>
+		}
+<span class="nc" id="L86">		return false;</span>
+	}
+
+	@Override
+	public boolean isEquivalent(ASTNode other, IExpressionContext context) 
+	{
+<span class="nc bnc" id="L92" title="All 2 branches missed.">		if ( !(other instanceof BooleanExpression) ) </span>
+		{
+<span class="nc" id="L94">			return false;</span>
+		}
+
+<span class="nc" id="L97">		final BooleanExpression otherExpr = (BooleanExpression ) other;</span>
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">		if ( getLHS().isEquivalent( otherExpr.getLHS() , context ) &amp;&amp;</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">		     getRHS().isEquivalent( otherExpr.getRHS() , context ) ) </span>
+		{
+<span class="nc" id="L102">			return true;</span>
+		}
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">		if ( getLHS().isEquivalent( otherExpr.getRHS() , context ) &amp;&amp;</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">			 getRHS().isEquivalent( otherExpr.getLHS() , context ) ) </span>
+		{
+<span class="nc" id="L108">			return true;</span>
+		}		
+<span class="nc" id="L110">		return false;</span>
+	}
+
+    @Override
+    protected int thisHashCode()
+    {
+<span class="nc" id="L116">        return 0x12fae214;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

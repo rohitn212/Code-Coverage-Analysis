@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Token.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boolean-algebra</a> &gt; <a href="index.source.html" class="el_package">de.codesourcery.booleanalgebra.lexer</a> &gt; <span class="el_source">Token.java</span></div><h1>Token.java</h1><pre class="source lang-java linenums">package de.codesourcery.booleanalgebra.lexer;
+
+public class Token
+{
+    private final int parseOffset;
+    private final String contents;
+    private final TokenType type;
+    
+    public Token(StringBuilder buffer, int parseOffset, TokenType type)
+    {
+<span class="nc" id="L11">        this( buffer.toString() , parseOffset, type );</span>
+<span class="nc" id="L12">    }</span>
+    
+    public Token(char c, int parseOffset, TokenType type)
+    {
+<span class="nc" id="L16">        this( Character.toString( c ) , parseOffset, type );</span>
+<span class="nc" id="L17">    }</span>
+    
+    public Token(String contents, int parseOffset,TokenType type)
+<span class="nc" id="L20">    {</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if ( contents == null ) {</span>
+<span class="nc" id="L22">            throw new IllegalArgumentException(&quot;contents must not be NULL.&quot;);</span>
+        }
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        if ( type == null ) {</span>
+<span class="nc" id="L25">            throw new IllegalArgumentException(&quot;type must not be NULL.&quot;);</span>
+        }
+<span class="nc" id="L27">        this.parseOffset = parseOffset;</span>
+<span class="nc" id="L28">        this.contents = contents;</span>
+<span class="nc" id="L29">        this.type = type;</span>
+<span class="nc" id="L30">    }</span>
+    
+    public int getParseOffset()
+    {
+<span class="nc" id="L34">        return parseOffset;</span>
+    }
+    
+    public String getContents()
+    {
+<span class="nc" id="L39">        return contents;</span>
+    }
+    
+    public TokenType getType()
+    {
+<span class="nc" id="L44">        return type;</span>
+    }
+
+    public boolean hasType(TokenType t) {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (t == null) {</span>
+<span class="nc" id="L49">            throw new IllegalArgumentException(&quot;t must not be NULL.&quot;);</span>
+        }
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        return getType() == t;</span>
+    }
+    
+    @Override
+    public String toString()
+    {
+<span class="nc" id="L57">        return &quot;'&quot;+getContents()+&quot;' ( &quot;+getType()+&quot; , offset &quot;+parseOffset+&quot; )&quot;;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

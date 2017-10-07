@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParseContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">boolean-algebra</a> &gt; <a href="index.source.html" class="el_package">de.codesourcery.booleanalgebra</a> &gt; <span class="el_source">ParseContext.java</span></div><h1>ParseContext.java</h1><pre class="source lang-java linenums">package de.codesourcery.booleanalgebra;
+
+import java.util.Set;
+
+import de.codesourcery.booleanalgebra.ast.ASTNode;
+import de.codesourcery.booleanalgebra.ast.Identifier;
+import de.codesourcery.booleanalgebra.lexer.Lexer;
+
+public class ParseContext extends Lexer implements IParseContext {
+
+	private final IExpressionContext ctx;
+	
+	public ParseContext(IScanner scanner,IExpressionContext ctx) {
+<span class="nc" id="L14">		super(scanner);</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">		if ( ctx == null ) {</span>
+<span class="nc" id="L16">			throw new IllegalArgumentException(&quot;ctx must not be null&quot;);</span>
+		}
+<span class="nc" id="L18">		this.ctx = ctx;</span>
+<span class="nc" id="L19">	}</span>
+
+	@Override
+	public ASTNode lookup(Identifier identifier) {
+<span class="nc" id="L23">		return ctx.lookup( identifier );</span>
+	}
+
+	@Override
+	public ASTNode tryLookup(Identifier identifier) {
+<span class="nc" id="L28">		return ctx.tryLookup(identifier);</span>
+	}
+
+	@Override
+	public void set(Identifier name, ASTNode value) {
+<span class="nc" id="L33">		ctx.set( name , value );</span>
+<span class="nc" id="L34">	}</span>
+
+	@Override
+	public Set&lt;Identifier&gt; getAllIdentifiers() {
+<span class="nc" id="L38">		return ctx.getAllIdentifiers();</span>
+	}
+
+	@Override
+	public void retainOnly(Set&lt;Identifier&gt; ids) {
+<span class="nc" id="L43">		ctx.retainOnly( ids );</span>
+<span class="nc" id="L44">	}</span>
+
+	@Override
+	public void remove(Identifier identifier) {
+<span class="nc" id="L48">		ctx.remove( identifier );</span>
+<span class="nc" id="L49">	}</span>
+
+    @Override
+    public IExpressionContext createCopy()
+    {
+<span class="nc" id="L54">        return ctx.createCopy();</span>
+    }
+
+    @Override
+    public void clear()
+    {
+<span class="nc" id="L60">        ctx.clear();</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    public Identifier createIdentifier(ASTNode value)
+    {
+<span class="nc" id="L66">        return ctx.createIdentifier( value );</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
