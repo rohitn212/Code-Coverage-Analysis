@@ -16,7 +16,7 @@ repositories {
 
 jar {
     manifest {
-        attributes 'MapReduce': 'de.codesourcery.booleanalgebra.MapReduce'  
+        attributes('Main-Class': 'de.codesourcery.booleanalgebra.MapReduce') 
     }
 }
 

@@ -35,8 +35,8 @@
       <file leaf-file-name="MapReduce.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/codesourcery/booleanalgebra/MapReduce.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="35" column="38" lean-forward="false" selection-start-line="35" selection-start-column="38" selection-end-line="35" selection-end-column="38" />
+            <state relative-caret-position="759">
+              <caret line="41" column="5" lean-forward="true" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -276,8 +276,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3013439433954" />
-        <entry key="$PROJECT_DIR$/build.gradle" value="3727239246" />
+        <entry key="$PROJECT_DIR$" value="3013447917555" />
+        <entry key="$PROJECT_DIR$/build.gradle" value="531218000" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -754,8 +754,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/de/codesourcery/booleanalgebra/MapReduce.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="35" column="38" lean-forward="false" selection-start-line="35" selection-start-column="38" selection-end-line="35" selection-end-column="38" />
+        <state relative-caret-position="759">
+          <caret line="41" column="5" lean-forward="true" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

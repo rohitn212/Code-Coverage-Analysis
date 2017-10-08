@@ -31,11 +31,13 @@ public class MapReduce {
 	public static class Reduce extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter)
 		throws IOException {
-			String tests = "";
+			StringBuilder tests = new StringBuilder("<");
 			while (values.hasNext()) {
-				tests += values.next() + " , ";
+				tests.append(values.next() + ", ");
 			}
-			output.collect(key, new Text(tests));
+			tests.delete(tests.length()-2, tests.length());
+			tests.append(">");
+			output.collect(key, new Text(tests.toString()));
 		}
 	}
 
