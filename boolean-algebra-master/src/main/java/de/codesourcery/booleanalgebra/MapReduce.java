@@ -58,8 +58,11 @@ public class MapReduce {
 		while (sorted) {
 			sorted = false;
 			for (int i = 1; i < testNameList.size(); i++) {
-				if (testLineCount.get(testNameList.get(i)) >
-						testLineCount.get(testNameList.get(i-1))) {
+				if (((testLineCount.get(testNameList.get(i)) ==
+						testLineCount.get(testNameList.get(i-1))) &&
+						(testNameList.get(i).compareToIgnoreCase(testNameList.get(i-1)) > 0))
+						|| (testLineCount.get(testNameList.get(i)) >
+						testLineCount.get(testNameList.get(i-1)))) {
 					sorted = true;
 					String temp = testNameList.get(i);
 					testNameList.set(i, testNameList.get(i-1));
