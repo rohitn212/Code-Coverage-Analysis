@@ -53,12 +53,6 @@ public class MapReduce {
 	}
 
 	public static ArrayList<String> sortTestNameList(ArrayList<String> testNameList) {
-		System.out.println("setNullTest count: " +
-				testLineCount.get("setNullTest"));
-		System.out.println("removeNullTest count: " +
-				testLineCount.get("removeNullTest"));
-		System.out.println("lookupNullTest count: " +
-				testLineCount.get("lookupNullTest"));
 		if (testNameList.size() < 2) return testNameList;
 		boolean sorted = true;
 		while (sorted) {
