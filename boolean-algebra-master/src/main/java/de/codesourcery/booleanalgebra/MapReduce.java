@@ -4,6 +4,9 @@ import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.*;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 public class MapReduce {
 
@@ -26,11 +29,11 @@ public class MapReduce {
 	}
 
 	public static class Reduce extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
-		public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) 
+		public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter)
 		throws IOException {
 			String tests = "";
 			while (values.hasNext()) {
-				tests += values.next().get() + " , ";
+				tests += values.next() + " , ";
 			}
 			output.collect(key, new Text(tests));
 		}
