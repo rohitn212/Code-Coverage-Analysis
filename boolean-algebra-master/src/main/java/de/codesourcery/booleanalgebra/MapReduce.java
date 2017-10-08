@@ -51,13 +51,10 @@ public class MapReduce {
 
 	public static ArrayList<String> sortTestNameList(ArrayList<String> testNameList) {
 		Comparator<String> myComparator = (o1, o2) -> {
-			if (testLineCount.get(o1) > testLineCount.get(o2))
+			if (testLineCount.get(o2) > testLineCount.get(o1))
 				return 1;
 			else if (Objects.equals(testLineCount.get(o1), testLineCount.get(o2))) {
-				if (o1.compareTo(o2) > 0)
-					return 1;
-				else if (o1.compareTo(o2) == 0)
-					return 0;
+				return o2.compareTo(o1);
 			}
 			return -1;
 		};
