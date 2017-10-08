@@ -5,10 +5,7 @@ import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.*;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.*;
 
 public class MapReduce {
 	public static HashMap<String, Integer> testLineCount = new HashMap<String, Integer>();
@@ -53,23 +50,18 @@ public class MapReduce {
 	}
 
 	public static ArrayList<String> sortTestNameList(ArrayList<String> testNameList) {
-		if (testNameList.size() < 2) return testNameList;
-		boolean sorted = true;
-		while (sorted) {
-			sorted = false;
-			for (int i = 1; i < testNameList.size(); i++) {
-				if (((testLineCount.get(testNameList.get(i)) ==
-						testLineCount.get(testNameList.get(i-1))) &&
-						(testNameList.get(i).compareToIgnoreCase(testNameList.get(i-1)) > 0))
-						|| (testLineCount.get(testNameList.get(i)) >
-						testLineCount.get(testNameList.get(i-1)))) {
-					sorted = true;
-					String temp = testNameList.get(i);
-					testNameList.set(i, testNameList.get(i-1));
-					testNameList.set(i-1, temp);
-				}
+		Comparator<String> myComparator = (o1, o2) -> {
+			if (testLineCount.get(o1) > testLineCount.get(o2))
+				return 1;
+			else if (Objects.equals(testLineCount.get(o1), testLineCount.get(o2))) {
+				if (o1.compareTo(o2) > 0)
+					return 1;
+				else if (o1.compareTo(o2) == 0)
+					return 0;
 			}
-		}
+			return -1;
+		};
+		Collections.sort(testNameList, myComparator);
 		return testNameList;
 	}
 
