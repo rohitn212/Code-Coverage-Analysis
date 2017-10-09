@@ -1,10 +1,10 @@
 # README #
 
 Undergrad
-679882752
-rnambi2@uic.edu
-Rohit
-Nambiar
+UID - 679882752
+Email - rnambi2@uic.edu
+First Name - Rohit
+Last Name - Nambiar
 
 ### What is this repository for? ###
 
