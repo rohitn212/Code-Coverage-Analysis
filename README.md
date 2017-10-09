@@ -8,7 +8,7 @@ Nambiar
 
 ### What is this repository for? ###
 
-UIC CS 442
+UIC CS 441 HW2
 
 ### How do I get set up? ###
 
