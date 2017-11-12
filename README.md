@@ -1,18 +1,10 @@
 # README #
 
-Undergrad
-UID - 679882752
-Email - rnambi2@uic.edu
-First Name - Rohit
-Last Name - Nambiar
-
 ### What is this repository for? ###
 
-UIC CS 441 HW2
+A code coverage analysis program that I developed for my cloud computing class at UIC. Initially, I had to choose an open sourced repository on github to work with, for which I ended up choosing https://github.com/toby1984/boolean-algebra. I had to write JUnit tests to further maximise coverage and then generate code coverage reports of said JUnit tests using Jacoco. Used an XML parser to parse the code coverage reports and produce an intermediate report. The intermediate report is then fed into Apache Hadoop MapReduce which produces a report containing the lines of code covered by the tests as the key and the tests that cover them as values (sorted in order of how many lines each test covers). Deployed the program in AWS S3 and AWS EMR to run it on the cloud.
 
 ### How do I get set up? ###
-
-youtube link - https://youtu.be/a-1pHVuhEds
 
 Download repo, navigate into boolean-algebra and execute following commands:
 
